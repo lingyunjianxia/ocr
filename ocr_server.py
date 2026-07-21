@@ -5,7 +5,6 @@ import cv2
 import numpy as np
 
 app = FastAPI()
-# 使用 ch 支持中文
 ocr = PaddleOCR(use_angle_cls=True, lang='ch')
 
 @app.post('/ocr')
@@ -15,8 +14,8 @@ async def ocr_endpoint(file: UploadFile = File(...)):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     if img is None:
         return {'error': 'Invalid image'}
-    result = ocr.ocr(img, cls=True)
-    # 提取所有识别文本
+    # 使用 predict 替代弃用的 ocr，去掉 cls 参数
+    result = ocr.predict(img)
     text_lines = []
     if result and result[0]:
         for line in result[0]:
