@@ -1,5 +1,5 @@
 # 使用 PaddlePaddle 基础
-FROM ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddle:3.0.0
+FROM ccr-2vdh3abv-pub.cnc.bj.baidubce.com/paddlepaddle/paddle:3.3.0
 
 # 设置环境变量，禁用可能引发问题的功能
 ENV FLAGS_use_mkldnn=0
