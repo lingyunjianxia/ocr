@@ -6,13 +6,11 @@ import numpy as np
 
 app = FastAPI()
 
-# 使用 PP-OCRv6 模型和 ONNX Runtime 引擎[reference:9]
+# 只指定语言和引擎，让 PaddleOCR 自动选择合适的中文模型
 ocr = PaddleOCR(
-    text_detection_model_name="PP-OCRv6_tiny_det",   # 可选: tiny_det, small_det, medium_det
-    text_recognition_model_name="PP-OCRv6_tiny_rec", # 可选: tiny_rec, small_rec, medium_rec
-    engine="onnxruntime",
-    use_textline_orientation=True,
-    lang='ch'  # 'ch' 表示中英文模型
+    engine='onnxruntime',            # 使用 ONNX Runtime 避免 Paddle 后端兼容问题
+    use_textline_orientation=True,   # 替代 use_angle_cls
+    lang='ch'                        # 指定中文，会自动使用 ch_PP-OCRv6 模型
 )
 
 @app.post('/ocr')
@@ -26,7 +24,7 @@ async def ocr_endpoint(file: UploadFile = File(...)):
     text_lines = []
     if result and result[0]:
         for line in result[0]:
-            text_lines.append(line[1][0])
+            text_lines.append(line[1][0])   # line[1][0] 是识别的文本
     text = '\n'.join(text_lines)
     return {'text': text}
 

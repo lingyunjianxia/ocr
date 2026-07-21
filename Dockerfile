@@ -15,8 +15,8 @@ RUN chmod +x /app/entrypoint.sh
 # 安装 PaddleOCR 3.7.0 及 ONNX Runtime[reference:7]
 RUN pip install paddleocr==3.7.0 fastapi uvicorn python-multipart onnxruntime -i https://pypi.org/simple
 
-# 预下载 PP-OCRv6 模型文件
-RUN python -c "from paddleocr import PaddleOCR; PaddleOCR(text_detection_model_name='PP-OCRv6_tiny_det', text_recognition_model_name='PP-OCRv6_tiny_rec', engine='onnxruntime')"
+# 预下载中文模型（与运行时参数一致）
+RUN python -c "from paddleocr import PaddleOCR; PaddleOCR(engine='onnxruntime', use_textline_orientation=True, lang='ch')"
 
 EXPOSE 8001
 
