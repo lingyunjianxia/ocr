@@ -20,12 +20,25 @@ async def ocr_endpoint(file: UploadFile = File(...)):
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     if img is None:
         return {'error': 'Invalid image'}
+
     result = ocr.predict(img)
+
+    # --- 修改开始 ---
+    # 使用更通用的方式提取所有识别出的文本
     text_lines = []
-    if result and result[0]:
-        for line in result[0]:
-            text_lines.append(line[1][0])   # line[1][0] 是识别的文本
+    if result:
+        # result 是一个列表，包含每张图片的识别结果（这里只有一张图）
+        for res in result:
+            # 从每个结果中提取 'rec_texts' 字段，它包含了所有识别出的文本行
+            if 'rec_texts' in res:
+                text_lines.extend(res['rec_texts'])
+            # 如果字段名不同，也可以尝试用 'rec_text' 或其他可能的键
+            # elif 'rec_text' in res:
+            #     text_lines.append(res['rec_text'])
+
     text = '\n'.join(text_lines)
+    # --- 修改结束 ---
+
     return {'text': text}
 
 if __name__ == '__main__':
